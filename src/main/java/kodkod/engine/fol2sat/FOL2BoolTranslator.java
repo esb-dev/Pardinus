@@ -569,6 +569,7 @@ abstract class FOL2BoolTranslator implements ReturnVisitor<BooleanMatrix, Boolea
 		final BooleanMatrix declTransl = visit(decl);
 		final BooleanMatrix groundValue = factory.matrix(declTransl.dimensions());
 		env = env.extend(decl.variable(), decl.expression(), groundValue, Quantifier.ALL);
+		System.out.println("env upd at all: "+env.isNegated());
 		for(IndexedEntry<BooleanValue> entry : declTransl) {
 		    groundValue.set(entry.index(), BooleanConstant.TRUE);
 			all(decls, formula, currentDecl+1, factory.or(factory.not(entry.value()), declConstraints), acc);
@@ -617,6 +618,7 @@ abstract class FOL2BoolTranslator implements ReturnVisitor<BooleanMatrix, Boolea
 		final BooleanMatrix declTransl = visit(decl);
 		final BooleanMatrix groundValue = factory.matrix(declTransl.dimensions());
 		env = env.extend(decl.variable(), decl.expression(), groundValue, Quantifier.SOME);
+		System.out.println("env upd at some: "+env.isNegated());
 		for(IndexedEntry<BooleanValue> entry : declTransl) {
 			groundValue.set(entry.index(), BooleanConstant.TRUE);
 			some(decls, formula, currentDecl+1, factory.and(entry.value(), declConstraints), acc);
@@ -1023,6 +1025,7 @@ abstract class FOL2BoolTranslator implements ReturnVisitor<BooleanMatrix, Boolea
 		final BooleanMatrix declTransl = visit(decl);
 		final BooleanMatrix groundValue = factory.matrix(declTransl.dimensions());
 		env = env.extend(decl.variable(), decl.expression(), groundValue);
+		System.out.println("env upd at sum: "+env.isNegated());
 		for(IndexedEntry<BooleanValue> entry : declTransl) {
 			groundValue.set(entry.index(), BooleanConstant.TRUE);
 			sum(decls, expr, currentDecl+1, factory.and(entry.value(), declConstraints), values);
