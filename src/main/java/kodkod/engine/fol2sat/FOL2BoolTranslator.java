@@ -557,8 +557,6 @@ abstract class FOL2BoolTranslator implements ReturnVisitor<BooleanMatrix, Boolea
 	 * @ensures the given accumulator contains the translation of the formula "all decls | formula"
 	 */
 	private void all(Decls decls, Formula formula, int currentDecl, BooleanValue declConstraints, BooleanAccumulator acc) {
-		if (env.isNegated())
-			System.out.println("env enter all: "+env.isNegated());
 		if (acc.isShortCircuited()) return;
 		final BooleanFactory factory = interpreter.factory();
 

@@ -85,7 +85,7 @@ public final class Environment<T, E> { // [AM]
 	 * @return the empty environment.
 	 */
 	public static <T, E> Environment<T, E> empty() { // [AM]
-		return (Environment<T, E>) EMPTY;
+		return (Environment<T, E>) new Environment();
 	}
 	
 	/**
