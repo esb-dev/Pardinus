@@ -226,6 +226,7 @@ abstract class FOL2BoolTranslator implements ReturnVisitor<BooleanMatrix, Boolea
 		this.interpreter = interpreter;
 		this.env = Environment.empty();
 		this.leafCache = new HashMap<LeafExpression, BooleanMatrix>(64);
+		System.out.println("env init "+env.isNegated());
 	}
 
 	/**
@@ -555,6 +556,7 @@ abstract class FOL2BoolTranslator implements ReturnVisitor<BooleanMatrix, Boolea
 	 * @ensures the given accumulator contains the translation of the formula "all decls | formula"
 	 */
 	private void all(Decls decls, Formula formula, int currentDecl, BooleanValue declConstraints, BooleanAccumulator acc) {
+		System.out.println("env enter all: "+env.isNegated());
 		if (acc.isShortCircuited()) return;
 		final BooleanFactory factory = interpreter.factory();
 
@@ -569,7 +571,6 @@ abstract class FOL2BoolTranslator implements ReturnVisitor<BooleanMatrix, Boolea
 		final BooleanMatrix declTransl = visit(decl);
 		final BooleanMatrix groundValue = factory.matrix(declTransl.dimensions());
 		env = env.extend(decl.variable(), decl.expression(), groundValue, Quantifier.ALL);
-		System.out.println("env upd at all: "+env.isNegated());
 		for(IndexedEntry<BooleanValue> entry : declTransl) {
 		    groundValue.set(entry.index(), BooleanConstant.TRUE);
 			all(decls, formula, currentDecl+1, factory.or(factory.not(entry.value()), declConstraints), acc);
@@ -618,7 +619,6 @@ abstract class FOL2BoolTranslator implements ReturnVisitor<BooleanMatrix, Boolea
 		final BooleanMatrix declTransl = visit(decl);
 		final BooleanMatrix groundValue = factory.matrix(declTransl.dimensions());
 		env = env.extend(decl.variable(), decl.expression(), groundValue, Quantifier.SOME);
-		System.out.println("env upd at some: "+env.isNegated());
 		for(IndexedEntry<BooleanValue> entry : declTransl) {
 			groundValue.set(entry.index(), BooleanConstant.TRUE);
 			some(decls, formula, currentDecl+1, factory.and(entry.value(), declConstraints), acc);
@@ -726,10 +726,8 @@ abstract class FOL2BoolTranslator implements ReturnVisitor<BooleanMatrix, Boolea
 		BooleanValue ret = lookup(not);
 		if (ret != null)
 		    return ret;
-		System.out.println("in not, will negate env "+env.isNegated());
 		env.negate();
 		ret = cache(not, interpreter.factory().not(not.formula().accept(this)));
-		System.out.println("out not, will negate env "+env.isNegated());
 		env.negate();
 		return ret;
 	}
@@ -1025,7 +1023,6 @@ abstract class FOL2BoolTranslator implements ReturnVisitor<BooleanMatrix, Boolea
 		final BooleanMatrix declTransl = visit(decl);
 		final BooleanMatrix groundValue = factory.matrix(declTransl.dimensions());
 		env = env.extend(decl.variable(), decl.expression(), groundValue);
-		System.out.println("env upd at sum: "+env.isNegated());
 		for(IndexedEntry<BooleanValue> entry : declTransl) {
 			groundValue.set(entry.index(), BooleanConstant.TRUE);
 			sum(decls, expr, currentDecl+1, factory.and(entry.value(), declConstraints), values);
