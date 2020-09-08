@@ -104,8 +104,12 @@ final class TrivialProof extends Proof {
 			coreRoots = new LinkedHashMap<Formula,Node>();
 			while( itr.hasNext() ) {
 				TranslationRecord rec = itr.next();
-				if (roots.contains(rec.translated()))
-					coreRoots.put(rec.translated(), rec.node());
+				if (roots.contains(rec.translated())) {
+					 // [HASLab] get original temporal formula from temporal translation log
+					Formula rt =  (Formula) log().temporalTransLog(rec.translated());
+					Node rn = log().temporalTransLog(rec.node());
+					coreRoots.put(rt, rn);
+				}
 			}
 			coreRoots = Collections.unmodifiableMap(coreRoots);
 		}

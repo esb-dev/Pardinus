@@ -49,7 +49,7 @@ public final class RunTests {
 
 	static private boolean batch = false;
 	
-	static private boolean reif = false, satit = true, satonly = false;
+	static private boolean reif = false, satit = true, satonly = false, quick = false;
 	
 	static private StringBuilder log = new StringBuilder();
 
@@ -87,6 +87,7 @@ public final class RunTests {
 		if(opts.contains("-h")) modes.add(DMode.HYBRID);
 		if(opts.contains("-i")) modes.add(DMode.INCREMENTAL);
 
+		if(opts.contains("--quick")) quick = true;
 		if(opts.contains("--satit")) satit = true;
 		if(opts.contains("--reif")) reif = true;
 		if(opts.contains("--iterateC")) iterate = 1;
@@ -381,24 +382,24 @@ public final class RunTests {
 
 		RingT2.Variant1 v;
 
-		if (!satonly) {
+		if (!satonly) {  
 			v = RingT2.Variant1.GOODLIVENESS;
-			for (int i = 1; i <= 8; i++) {
+			for (int i = 1; i <= (quick?6:8); i++) {
 				runModes(model, new String[] { i + "", v.name() });
 			}
 			
 			v = RingT2.Variant1.GOODSAFETY;
-			for (int i = 1; i <= 8; i++) {
+			for (int i = 1; i <= (quick?6:8); i++) {
 				runModes(model, new String[] { i + "", v.name() });
 			}
 		}
 		v = RingT2.Variant1.SCENARIO;
-		for (int i = 1; i <= 12; i++) {
+		for (int i = 1; i <= (quick?6:12); i++) {
 			runModes(model, new String[] { i + "", v.name() });
 		}
 
 		v = RingT2.Variant1.BADLIVENESS;
-		for (int i = 1; i <= 12; i++) { 
+		for (int i = 1; i <= (quick?6:12); i++) { 
 			runModes(model, new String[] { i + "", v.name() });
 		}
 
@@ -440,12 +441,12 @@ public final class RunTests {
 		String model = DijkstraT.class.getCanonicalName();
 		DijkstraT.Variant v;
 		v = DijkstraT.Variant.SHOW;
-		for (int i = 1; i <= 20; i ++)  {
+		for (int i = 1; i <= (quick?12:20); i ++)  {
 			runModes(model, new String[]{i+"",v.name()});
 		}
 		if (!satonly) {
 			v = DijkstraT.Variant.DEADLOCKS;
-			for (int i = 1; i <= 20; i ++)  {
+			for (int i = 1; i <= (quick?12:20); i ++)  {
 				runModes(model, new String[]{i+"",v.name()});
 			}
 		}
@@ -458,12 +459,12 @@ public final class RunTests {
 		String model = HotelT.class.getCanonicalName();
 		HotelT.Variant v;
 		v = HotelT.Variant.INTERVENES;
-		for (int i = 1; i <= 12; i++) {
+		for (int i = 1; i <= (quick?4:10); i++) {
 			runModes(model, new String[] { i + "", v.name() });
 		}
 		if (!satonly) {
 			v = HotelT.Variant.NOINTERVENES;
-			for (int i = 1; i <= 8 ; i++) {
+			for (int i = 1; i <= (quick?4:6) ; i++) {
 				runModes(model, new String[] { i + "", v.name() });
 			}
 		}

@@ -31,6 +31,7 @@ import kodkod.engine.config.SLF4JReporter;
 import kodkod.engine.config.DecomposedOptions.DMode;
 import kodkod.engine.decomp.DModel;
 import kodkod.engine.satlab.SATFactory;
+import kodkod.examples.pardinus.temporal.RingT.Variant2;
 import kodkod.instance.Bounds;
 import kodkod.instance.PardinusBounds;
 import kodkod.instance.TupleFactory;
@@ -172,7 +173,13 @@ public class RingT2 extends DModel {
 	 * @return the declarations and facts of the model
 	 */
 	public Formula invariants() {
-		return traces().and(defineElected());
+		return traces().and(defineElected())/*.and(declarations())*/;
+	}
+	
+	public Formula declarations() {
+		final Formula f1 = Elected.in(Process).always();
+		final Formula f2 = outbox.in(Process.product(Id)).always();														 
+		return Formula.and(f1, f2);
 	}
 
 	/**
@@ -181,7 +188,7 @@ public class RingT2 extends DModel {
 	 * @return the declarations and facts of the model
 	 */
 	public Formula invariantsFixed() {
-		return traces().and(defineElectedFixed());
+		return traces().and(defineElectedFixed())/*.and(declarations())*/;
 	}
 
 	/**
@@ -269,6 +276,13 @@ public class RingT2 extends DModel {
 
 		b.bound(outbox, Process.product(Id));
 		b.bound(Elected, Process);
+
+		final TupleFactory f = u.factory();
+		final TupleSet pb = f.range(f.tuple("Process0"), f.tuple("Process" + (n_ps - 1)));
+		final TupleSet ib = f.range(f.tuple("Id0"), f.tuple("Id" + (n_ps - 1)));
+
+//		b.bound(outbox, pb.product(ib));
+//		b.bound(Elected, pb);
 
 		return b;
 	}

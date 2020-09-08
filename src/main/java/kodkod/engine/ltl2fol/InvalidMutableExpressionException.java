@@ -35,7 +35,7 @@ public final class InvalidMutableExpressionException extends RuntimeException {
 	/**
 	 * TODO
 	 */
-	 InvalidMutableExpressionException(Node node) {
+	InvalidMutableExpressionException(Node node) {
 		super("Invalid mutable expression: " + node);
 		this.node = node;
 	}

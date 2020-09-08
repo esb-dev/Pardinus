@@ -80,7 +80,7 @@ public class PardinusSolver implements
 		if (!options.temporal() && options.unbounded())
 			throw new IllegalArgumentException("Unbounded solver only for temporal problems.");
 		
-		if (options.targetoriented() && !options.configOptions().solver().maxsat())
+		if (options.targetoriented() && !options.solver().maxsat())
 			throw new IllegalArgumentException("A max sat solver is required for target-oriented solving.");			
 		
 		this.options = options;

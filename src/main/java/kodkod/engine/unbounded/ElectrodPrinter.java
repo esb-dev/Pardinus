@@ -71,11 +71,13 @@ import kodkod.ast.operator.IntOperator;
 import kodkod.ast.operator.Multiplicity;
 import kodkod.ast.operator.TemporalOperator;
 import kodkod.ast.visitor.VoidVisitor;
+import kodkod.engine.InvalidSolverParamException;
 import kodkod.engine.config.AbstractReporter;
 import kodkod.engine.config.ExtendedOptions;
 import kodkod.engine.config.Options;
 import kodkod.engine.config.Reporter;
 import kodkod.engine.fol2sat.Translation.Whole;
+import kodkod.engine.ltl2fol.InvalidMutableExpressionException;
 import kodkod.engine.fol2sat.Translator;
 import kodkod.instance.Bounds;
 import kodkod.instance.PardinusBounds;
@@ -176,16 +178,12 @@ public class ElectrodPrinter {
 		Whole t = Translator.translate(formula.and(symbForm), bounds, opt);
 		bounds = (PardinusBounds) t.bounds();
 
-		try {
-			StringBuilder sb = new StringBuilder();
-			sb.append(printUniverse(bounds.universe()));
-			sb.append(printBounds(bounds));
-			sb.append(printSymmetries(temp.toString()));
-			sb.append(printConstraint(formula.and(symbForm)));
-			return sb.toString();
-		} catch (Exception e) {
-			throw new InvalidUnboundedProblem(e);
-		}
+		StringBuilder sb = new StringBuilder();
+		sb.append(printUniverse(bounds.universe()));
+		sb.append(printBounds(bounds));
+		sb.append(printSymmetries(temp.toString()));
+		sb.append(printConstraint(formula.and(symbForm)));
+		return sb.toString();
 	}
 
 	/**
@@ -376,6 +374,7 @@ public class ElectrodPrinter {
 			final StringBuilder tokens;
 			private final int lineLength;
 			private int indent, lineStart;
+			private Formula lastFormula;
 			
 			/**
 			 * Constructs a new tokenizer.
@@ -649,6 +648,7 @@ public class ElectrodPrinter {
 			/** @ensures appends the tokenization of the given node to this.tokens */
 			// [HASLab] break conjuncts if top level
 			public void visit(BinaryFormula node) {
+				lastFormula = node;
 				final FormulaOperator op = node.op();
 				final boolean pleft = parenthesize(op, node.left());
 				if (pleft) indent++;
@@ -667,6 +667,7 @@ public class ElectrodPrinter {
 			
 			/** @ensures this.tokens' = concat[ this.tokens, tokenize[node.left], node.op, tokenize[node.right] */
 			public void visit(ComparisonFormula node) {
+				lastFormula = node;
 				visitChild(node.left(), parenthesize(node.left()));
 				infix(node.op());
 				visitChild(node.right(), parenthesize(node.right()));
@@ -674,6 +675,7 @@ public class ElectrodPrinter {
 			
 			/** @ensures this.tokens' = concat[ this.tokens, tokenize[node.left], node.op, tokenize[node.right] */
 			public void visit(IntComparisonFormula node) {
+				lastFormula = node;
 				visitChild(node.left(), parenthesize(node.left()));
 				infix(node.op());
 				visitChild(node.right(), parenthesize(node.right()));
@@ -682,6 +684,7 @@ public class ElectrodPrinter {
 			/** @ensures appends the tokenization of the given node to this.tokens */
 			// [HASLab] temporal formulas
 			public void visit(BinaryTempFormula node) {
+				lastFormula = node;
 				final TemporalOperator op = node.op();
 				final boolean pleft = parenthesize(op, node.left());
 				if (pleft) indent++;
@@ -751,6 +754,7 @@ public class ElectrodPrinter {
 			/** @ensures this.tokens' = concat[ this.tokens,  node.quantifier,
 			 *   tokenize[node.decls], "|", tokenize[ node.formula ] ]*/
 			public void visit(QuantifiedFormula node) {
+				lastFormula = node;
 				keyword(node.quantifier());
 				node.decls().accept(this);
 				infix("{");
@@ -785,6 +789,7 @@ public class ElectrodPrinter {
 			/** @ensures appends the tokenization of the given node to this.tokens */
 			// [HASLab] break conjuncts if top level
 			public void visit(NaryFormula node) {
+				lastFormula = node;
 				final FormulaOperator op = node.op();
 				boolean parens = parenthesize(op, node.child(0));
 				if (parens) indent++;
@@ -814,10 +819,11 @@ public class ElectrodPrinter {
 			 *   tokenize[node.intExpr], "]" ] **/
 			// [HASLab] integer relations
 			public void visit(IntToExprCast node) {
-				append("Int");
-				append("[");
-				node.intExpr().accept(this);
-				append("]");
+				throw new InvalidUnboundedProblem(lastFormula);
+//				append("Int");
+//				append("[");
+//				node.intExpr().accept(this);
+//				append("]");
 			}
 			
 			/** @throws InvalidUnboundedProblem 
@@ -827,11 +833,12 @@ public class ElectrodPrinter {
 			public void visit(ExprToIntCast node) {
 				switch(node.op()) { 
 				case SUM:
-					append("int");
-					append("[");
-					node.expression().accept(this);
-					append("]");
-					break;
+					throw new InvalidUnboundedProblem(lastFormula);
+//					append("int");
+//					append("[");
+//					node.expression().accept(this);
+//					append("]");
+//					break;
 				case CARDINALITY : 
 					append("#");
 					append("(");
@@ -845,6 +852,7 @@ public class ElectrodPrinter {
 
 			/** @ensures appends the tokenization of the given node to this.tokens */
 			public void visit(RelationPredicate node) {
+				lastFormula = node;
 				switch(node.name()) { 
 				case ACYCLIC : 
 					append("acyclic");

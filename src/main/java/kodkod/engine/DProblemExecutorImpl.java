@@ -148,7 +148,7 @@ public class DProblemExecutorImpl<S extends AbstractSolver<PardinusBounds, Exten
 							// store the unsat solution
 							solution_queue.put(sol.getSolutions());
 						else
-							launchBatch(true);
+							launchBatch(false);
 				}
 			}
 		} catch (InterruptedException | IllegalThreadStateException e1) {
@@ -251,6 +251,8 @@ public class DProblemExecutorImpl<S extends AbstractSolver<PardinusBounds, Exten
 			last_sol = buffer;
 			buffer = null;
 		} else {
+			if (!monitor.isConfigsDone() && running.get() == 0)
+				launchBatch(false);
 			last_sol = solution_queue.take();
 		}
 		monitor.gotNext(false);
@@ -272,6 +274,8 @@ public class DProblemExecutorImpl<S extends AbstractSolver<PardinusBounds, Exten
 				return true;
 			if (monitor.isConfigsDone() && running.get() == 0)
 				return !solution_queue.isEmpty();
+			if (!monitor.isConfigsDone() && running.get() == 0)
+				launchBatch(false);
 		}
 		// if there are integrated problems still running, can't just test for
 		// emptyness must wait for the next output

@@ -365,7 +365,7 @@ public class HotelT extends DModel {
 
 	@Override
 	public Formula partition2() {
-		Formula f2 = Formula.and(/*tempDecls(),*/ tempFacts(), init(), next(), noBadEntries().not());
+		Formula f2 = Formula.and(/*tempDecls(), */tempFacts(), init(), next(), noBadEntries().not());
 		if (variant == Variant.NOINTERVENES)
 			f2 = f2.and(noIntervenes());
 		return f2;

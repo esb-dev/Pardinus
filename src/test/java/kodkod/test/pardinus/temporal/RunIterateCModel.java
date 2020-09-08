@@ -193,13 +193,13 @@ public final class RunIterateCModel {
 			
 			long t1 = System.currentTimeMillis();
 			int i;
-			for (i=0; i<100 && solution.sat(); i++) {
+			for (i=0; i<100 && solutions.hasNextC(); i++) {
 				solution = solutions.nextC();
 				System.out.println(i);
 			}
 			long t2 = System.currentTimeMillis();
 
-			for (; i<100 && solution.sat(); i++) {
+			for (; i<10000 && solutions.hasNextC(); i++) {
 				solution = solutions.nextC();
 			}
 			long t22 = System.currentTimeMillis();

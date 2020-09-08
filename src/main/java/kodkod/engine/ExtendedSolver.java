@@ -104,7 +104,7 @@ public class ExtendedSolver extends AbstractKodkodSolver<PardinusBounds,Extended
 		 * Constructs a solution iterator for the given formula, bounds, and options.
 		 */
 		SolutionIterator(Formula formula, Bounds bounds, ExtendedOptions options) {
-			if (options.targetoriented() && !options.configOptions().solver().maxsat())
+			if (options.targetoriented() && !options.solver().maxsat())
 				throw new IllegalArgumentException("A max sat solver is required for target-oriented solving.");			
 
 			this.opt = options;

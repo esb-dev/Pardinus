@@ -651,7 +651,7 @@ public class PardinusBounds extends Bounds {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public PardinusBounds clone() {
+	public synchronized PardinusBounds clone() {
 		try {
 				
 			return new PardinusBounds(universe().factory(),

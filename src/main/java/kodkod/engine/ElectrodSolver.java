@@ -220,14 +220,14 @@ public class ElectrodSolver implements UnboundedSolver<ExtendedOptions>,
 				new File(file+".elo").deleteOnExit();
 			}
 			writer = new PrintWriter(file+".elo");
-			String electrod = ElectrodPrinter.print(formula, bounds, rep);
-			writer.println(electrod);
-			writer.close();
-			rep.debug("New Electrod problem at "+dir+".");
 		} catch (Exception e) {
 			rep.debug(e.getMessage());
 			throw new AbortedException("Electrod problem generation failed.", e);
 		}
+		String electrod = ElectrodPrinter.print(formula, bounds, rep);
+		writer.println(electrod);
+		writer.close();
+		rep.debug("New Electrod problem at "+dir+".");
 		ProcessBuilder builder;
 		List<String> args = new ArrayList<String>();
 		args.add(((ExternalSolver) options.solver().instance()).executable);

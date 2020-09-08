@@ -23,6 +23,7 @@
 package kodkod.engine.ltl2fol;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,6 @@ import kodkod.ast.UnaryTempFormula;
 import kodkod.ast.Variable;
 import kodkod.ast.operator.TemporalOperator;
 import kodkod.ast.visitor.AbstractReplacer;
-import kodkod.util.nodes.Nodes;
 
 import static kodkod.engine.ltl2fol.TemporalTranslator.L_FIRST;
 import static kodkod.engine.ltl2fol.TemporalTranslator.L_LAST;
@@ -73,6 +73,7 @@ import static kodkod.engine.ltl2fol.TemporalTranslator.START;
 public class LTL2FOLTranslator extends AbstractReplacer {
 
 	private Set<Relation> vars_found;
+	private Map<Formula,Formula> inv_cache = new HashMap<>();
 
 	/** Pre-computed information about the formula, allows optimizations. */
 	private boolean has_past;
@@ -90,6 +91,16 @@ public class LTL2FOLTranslator extends AbstractReplacer {
 		super(new HashSet<Node>());
 		this.has_past = has_past;
 		this.vars_found = new HashSet<Relation>();
+	}
+	
+	@Override
+	protected <N extends Node> N cache(N node, N replacement) {
+		if (cached.contains(node)) {
+			cache.put(node, replacement);
+		}
+		if (node instanceof Formula)
+			inv_cache.put((Formula) replacement, (Formula) node);
+		return replacement;
 	}
 
 	/**
@@ -146,10 +157,9 @@ public class LTL2FOLTranslator extends AbstractReplacer {
 		translator.pushLevel();
 		translator.pushVariable(state);
 
-		// log translation of top-level formulas
-		for (Formula fs : Nodes.roots(form)) {
-			tempTransLog.put(fs.accept(translator), fs);
-		}
+		// log translation of formulas
+		Formula tfrm =form.accept(translator);
+		tempTransLog.putAll(translator.inv_cache);
 		
 		Formula hack = Formula.TRUE;
 		if (!TemporalTranslator.ExplicitUnrolls) {
@@ -158,7 +168,7 @@ public class LTL2FOLTranslator extends AbstractReplacer {
 				hack = hack.and(r.join(LOOP.join(PREFIX.transpose())).eq(r.join(LAST)));
 		}
 		
-		return Formula.and(f,Formula.and(tempTransLog.keySet()),hack);
+		return Formula.and(f,tfrm,hack);
 	}
 
 	/**
@@ -216,26 +226,30 @@ public class LTL2FOLTranslator extends AbstractReplacer {
 	@Override
 	public Expression visit(ConstantExpression constant) {
 		Expression eu = STATE;
+		final Expression res;
 		if (has_past) eu = UNROLL_MAP.join(STATE);
 		if (constant.equals(Expression.UNIV))
-			return constant.difference(eu);
+			res = constant.difference(eu);
 		else if (constant.equals(Expression.IDEN)) 
-			return constant.difference(eu.product(eu));
+			res = constant.difference(eu.product(eu));
 		else
-			return constant;
+			res = constant;
+		return cache(constant, res);
 	}
 
 	@Override
 	public Expression visit(Relation relation) {
+		final Expression res;
 		if (relation.isVariable()) {
 			if (has_past && TemporalTranslator.ExplicitUnrolls)
-				return relation.getExpansion().join(getVariable().join(UNROLL_MAP));
+				res = relation.getExpansion().join(getVariable().join(UNROLL_MAP));
 			else {
 				if (has_past) vars_found.add(relation.getExpansion());
-				return relation.getExpansion().join(getVariable());
+				res = relation.getExpansion().join(getVariable());
 			}
 		} else
-			return relation;
+			res = relation;
+		return cache(relation, res);
 	}
 
 	@Override
@@ -244,8 +258,8 @@ public class LTL2FOLTranslator extends AbstractReplacer {
 			// cannot simply expand since it would loose symmetry breaking
 			// return relationPredicate.toConstraints().always().accept(this);
 			throw new InvalidMutableExpressionException(relationPredicate);
-		else
-			return relationPredicate;
+
+		return cache(relationPredicate,relationPredicate);
 	}
 
 	@Override
@@ -258,7 +272,7 @@ public class LTL2FOLTranslator extends AbstractReplacer {
 		popOperator();
 		popVariable();
 		popLevel();
-		return rt;
+		return cache(unaryTempFormula,rt);
 	}
 
 	@Override
@@ -312,18 +326,17 @@ public class LTL2FOLTranslator extends AbstractReplacer {
 		popVariable();
 		popLevel();
 		popOperator();
-		return rt;
+		return cache(binaryTempFormula,rt);
 	}
 
 	@Override
 	public Expression visit(TempExpression tempExpression) {
 		pushOperator(tempExpression.op());
 		pushVariable();
-
-		Expression localExpression = tempExpression.expression().accept(this);
+		Expression rt = tempExpression.expression().accept(this);
 		popOperator();
 		popVariable();
-		return localExpression;
+		return cache(tempExpression,rt);
 	}
 
 	private Formula getQuantifier(TemporalOperator op, Formula e) {

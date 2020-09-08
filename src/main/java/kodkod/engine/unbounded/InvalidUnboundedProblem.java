@@ -22,6 +22,8 @@
  */
 package kodkod.engine.unbounded;
 
+import kodkod.ast.Node;
+
 /**
  * A runtime exception thrown when an unbounded problem is not supported by the
  * unbounded solver.
@@ -30,28 +32,22 @@ package kodkod.engine.unbounded;
  */
 public class InvalidUnboundedProblem extends RuntimeException {
 
+	private final Node node;
 	private static final long serialVersionUID = -8759960031301848539L;
 
 	/**
-	 * Constructs an invalid unbounded problem exception with the given message.
+	 * TODO
 	 */
-	InvalidUnboundedProblem(String message) {
-		super(message);
+	InvalidUnboundedProblem(Node node) {
+		super("Invalid formula: " + node);
+		this.node = node;
 	}
 
 	/**
-	 * Constructs an invalid unbounded problem exception with the given cause.
+	 * TODO
 	 */
-	InvalidUnboundedProblem(Throwable cause) {
-		super(cause);
-	}
-
-	/**
-	 * Constructs an invalid unbounded problem exception with the given message
-	 * and cause.
-	 */
-	InvalidUnboundedProblem(String message, Throwable cause) {
-		super(message, cause);
+	public Node node() {
+		return node;
 	}
 
 }
