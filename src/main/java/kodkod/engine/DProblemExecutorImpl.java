@@ -148,7 +148,7 @@ public class DProblemExecutorImpl<S extends AbstractSolver<PardinusBounds, Exten
 							// store the unsat solution
 							solution_queue.put(sol.getSolutions());
 						else
-							launchBatch(false);
+							launchBatch();
 				}
 			}
 		} catch (InterruptedException | IllegalThreadStateException e1) {
@@ -195,38 +195,30 @@ public class DProblemExecutorImpl<S extends AbstractSolver<PardinusBounds, Exten
 			running.incrementAndGet();
 			amalgamated = amalg;
 		} 
+		
+		launchBatch();
 
-		launchBatch(true);
 	}
 	Iterator<Solution> configs = solver_partial.solveAll(formula, bounds);
 
+	private boolean first_config = true;
 	private Entry<Solution,Iterator<Solution>> last_sol;
 	
-	synchronized void launchBatch(boolean first) {
+	synchronized void launchBatch() {
 		
 		BlockingQueue<DProblem<S>> problem_queue = new LinkedBlockingQueue<DProblem<S>>(BATCH_SIZE);
 		// collects a batch of configurations
+		Solution config = null;
 		while (configs.hasNext() && problem_queue.size() < BATCH_SIZE) {
-			Solution config = configs.next();
-			if (config.unsat()) {
-				// when there is no configuration no solver will ever
-				// callback so it must be terminated here
-				if (first)
-					try {
-						// get the stats from the unsat
-						monitor.newConfig(config);
-//						terminate();
-						solution_queue.put(poison(config));
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-			} else {
+			config = configs.next();
+
+			if (config.sat()) {
 				monitor.newConfig(config);
 
 				DProblem<S> problem = new IProblem<S>(config, this);
 				problem_queue.add(problem);
 			}
-			first = false;
+			first_config = false;
 		}
 		// launches a batch of integrated problems
 		while (!problem_queue.isEmpty() && !executor.isShutdown()) {
@@ -239,6 +231,21 @@ public class DProblemExecutorImpl<S extends AbstractSolver<PardinusBounds, Exten
 			}
 			running.incrementAndGet();
 		}
+		
+		if (!config.sat()) {
+			// when there is no configuration no solver will ever
+			// callback so it must be terminated here
+			if ((running.get() == 0 && !hybrid) || (running.get() == 1 && hybrid))
+				try {
+					// get the stats from the unsat
+					monitor.newConfig(config);
+//					terminate();
+					solution_queue.put(poison(config));
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+		}
+			
 		monitor.configsDone(configs.hasNext());
 	}
 
@@ -252,7 +259,7 @@ public class DProblemExecutorImpl<S extends AbstractSolver<PardinusBounds, Exten
 			buffer = null;
 		} else {
 			if (!monitor.isConfigsDone() && running.get() == 0)
-				launchBatch(false);
+				launchBatch();
 			last_sol = solution_queue.take();
 		}
 		monitor.gotNext(false);
@@ -275,7 +282,7 @@ public class DProblemExecutorImpl<S extends AbstractSolver<PardinusBounds, Exten
 			if (monitor.isConfigsDone() && running.get() == 0)
 				return !solution_queue.isEmpty();
 			if (!monitor.isConfigsDone() && running.get() == 0)
-				launchBatch(false);
+				launchBatch();
 		}
 		// if there are integrated problems still running, can't just test for
 		// emptyness must wait for the next output

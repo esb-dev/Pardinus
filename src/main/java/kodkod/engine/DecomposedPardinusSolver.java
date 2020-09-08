@@ -119,7 +119,14 @@ public class DecomposedPardinusSolver<S extends AbstractSolver<PardinusBounds, E
 			throw new IllegalArgumentException("An incremental solver is required to iterate the configurations.");
 
 		executor = new DProblemExecutorImpl<S>(options.reporter(), formula, bounds, solver1, solver2, options.threads(), options.decomposedMode() == DMode.HYBRID);
-		executor.start();
+		ExecutorService ex = Executors.newSingleThreadExecutor();
+		Future<?> fut = ex.submit(executor);
+		try {
+			fut.get();
+		} catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Solution sol = null;
 		try {
 			Entry<Solution,Iterator<Solution>> exp = executor.next();

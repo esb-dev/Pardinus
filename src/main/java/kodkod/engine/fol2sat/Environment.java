@@ -37,7 +37,6 @@ import kodkod.ast.operator.Quantifier;
  * @invariant this = parent => no variable
  * @author Emina Torlak 
  */
-@SuppressWarnings("unchecked")
 public final class Environment<T, E> { // [AM]
 	private final Variable variable;
 	private final T value;
@@ -46,11 +45,12 @@ public final class Environment<T, E> { // [AM]
 	private final Object envType;  // [AM] // may be null, but will typically contain Quantifier.ALL or Quantifier.SOME
 	private boolean negated; // [AM]
 
-	/**
-	 * The empty environment; EMPTY is its own parent.
-	 */
-	@SuppressWarnings("rawtypes")
-	static final Environment EMPTY = new Environment();
+	// [AM]
+//	/**
+//	 * The empty environment; EMPTY is its own parent.
+//	 */
+//	@SuppressWarnings("rawtypes")
+//	static final Environment EMPTY = new Environment();
 	
 	/**
 	 * Constructs the empty environment.
@@ -84,8 +84,8 @@ public final class Environment<T, E> { // [AM]
 	 * Returns the empty environment.
 	 * @return the empty environment.
 	 */
-	public static <T, E> Environment<T, E> empty() { // [AM]
-		return (Environment<T, E>) EMPTY;
+	public static <T, E> Environment<T, E> empty() {
+	    return new Environment<T, E>(); // [AM]
 	}
 	
 	/**
@@ -94,7 +94,8 @@ public final class Environment<T, E> { // [AM]
 	 * 
 	 * @return this.parent
 	 */
-	public Environment<T, E> parent() { return parent; } // [AM]
+	// [AM]
+	public Environment<T, E> parent() { return parent; }
 	
 	/**
 	 * Returns a new environment that extends this environment with the specified
@@ -157,13 +158,13 @@ public final class Environment<T, E> { // [AM]
 	    return negated;
 	}
 	
-	/**
-	 * Returns true if this is the empty environment;
+    /**
+	 * Returns true if this is the empty (root) environment;
 	 * otherwise returns false.
-	 * @return this.parent = EMPTY
+	 * @return this.parent = this
 	 */
 	public boolean isEmpty() {
-		return this==EMPTY;
+		return this==this.parent; // [AM]
 	}
 		
 	/**
@@ -179,7 +180,7 @@ public final class Environment<T, E> { // [AM]
 		Environment<T, E> p = this; // [AM]
 		// ok to use == for testing variable equality: 
 		// see kodkod.ast.LeafExpression#equals
-		while(p!=EMPTY && p.variable!=variable) {
+		while(!p.isEmpty() && p.variable!=variable) { // [AM]
 			p = p.parent;
 		}
 		return p.value;
@@ -200,7 +201,7 @@ public final class Environment<T, E> { // [AM]
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return (parent == EMPTY ? "[]" : parent.toString()) + "["+variable+"="+value+"]";
+		return (parent.isEmpty() ? "[]" : parent.toString()) + "["+variable+"="+value+"]"; // [AM]
 	}
 	
 	
