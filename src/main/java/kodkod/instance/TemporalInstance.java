@@ -35,6 +35,7 @@ import java.util.Set;
 import kodkod.ast.Decls;
 import kodkod.ast.Expression;
 import kodkod.ast.Formula;
+import kodkod.ast.IntConstant;
 import kodkod.ast.Relation;
 import kodkod.ast.Variable;
 import kodkod.engine.Evaluator;
@@ -283,19 +284,22 @@ public class TemporalInstance extends Instance {
 		// reify atoms not yet reified
 		Universe sta_uni = states.get(0).universe();
 		for (int i = 0; i < sta_uni.size(); i++) {
-			Expression r;
-			if (!reif.keySet().contains(sta_uni.atom(i))) {
-				if (someDisj) {
-					r = Variable.unary(sta_uni.atom(i).toString());
+			// integers do not need to be quantified
+			if (!sta_uni.atom(i).toString().matches("-?\\d+")) {
+				Expression r;
+				if (!reif.keySet().contains(sta_uni.atom(i))) { 
+					if (someDisj) {
+						r = Variable.unary(sta_uni.atom(i).toString());
+					} else {
+						r = Relation.atom(sta_uni.atom(i).toString());
+					}
+					reif.put(sta_uni.atom(i), r);
 				} else {
-					r = Relation.atom(sta_uni.atom(i).toString());
+					r = reif.get(sta_uni.atom(i));
 				}
-				reif.put(sta_uni.atom(i), r);
-			} else {
-				r = reif.get(sta_uni.atom(i));
+				if (!someDisj && !bounds.relations.contains((Relation) r))
+					bounds.boundExactly((Relation) r, bounds.universe().factory().setOf(sta_uni.atom(i)));
 			}
-			if (!someDisj && !bounds.relations.contains((Relation) r))
-				bounds.boundExactly((Relation) r, bounds.universe().factory().setOf(sta_uni.atom(i)));
 		}
 
 
@@ -372,6 +376,9 @@ public class TemporalInstance extends Instance {
 						decls = decls.and(((Variable) e).oneOf(Expression.UNIV));
 					}
 				}
+				for (int i = 0; i < sta_uni.size(); i++)
+					if (sta_uni.atom(i).toString().matches("-?\\d+"))
+						al = al.union(IntConstant.constant(Integer.valueOf(sta_uni.atom(i).toString())).toExpression());
 				res = (al.eq(Expression.UNIV)).and(res);
 				res = res.forSome(decls);
 			}
