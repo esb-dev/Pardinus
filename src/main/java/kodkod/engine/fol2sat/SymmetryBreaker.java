@@ -211,7 +211,7 @@ final class SymmetryBreaker {
 				int curIndex = indeces.next();
 				Iterator<Tuple> times = null;
 				if (bounds.relations().contains(TemporalTranslator.STATE))
-						bounds.lowerBound(TemporalTranslator.STATE).iterator();
+					times = bounds.lowerBound(TemporalTranslator.STATE).iterator();
 				Tuple time = null;
 				do {
 					for(Iterator<RelationParts> rIter = relParts.iterator(); rIter.hasNext() && original.size() < predLength;) {
@@ -239,7 +239,7 @@ final class SymmetryBreaker {
 								continue;
 							
 							boolean zzz = false;
-								if (times != null) {
+							if (times != null) {
 								TupleSet yyy = bounds.lowerBound(TemporalTranslator.STATE);
 								Tuple xxx = interpreter.universe().factory().tuple(interpreter.universe().factory().tuple(r.arity(), entry.index()).atom(r.arity()-1));
 								zzz = yyy.contains(xxx);	

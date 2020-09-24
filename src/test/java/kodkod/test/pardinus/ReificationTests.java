@@ -83,9 +83,9 @@ public class ReificationTests {
 		opt.reporter().debug(inst.toString());
 //		relations: {a=[[A2]], b=[[B2]]}
 
-		assertEquals("((a = $$A2$$) and (b = $$B2$$))", inst.formulate(bounds.clone(), x, formula, false).toString());
+		assertEquals("((a = $$A2$$) and (b = $$B2$$))", inst.formulate(x, formula, false, bounds.clone()).toString());
 
-		formula = formula.and(inst.formulate(bounds, x, formula, false).not());
+		formula = formula.and(inst.formulate(x, formula, false, bounds).not());
 
 		inst = new Instance(uni);
 		inst.add(a, f.range(f.tuple("A1"),f.tuple("A2")));
@@ -96,9 +96,9 @@ public class ReificationTests {
 //		relations: {a=[[A1], [A2]], b=[[B1], [B2]], $$A2$$=[[A2]], $$B2$$=[[B2]], $$A0$$=[[A0]], $$A1$$=[[A1]], $$B0$$=[[B0]], $$B1$$=[[B1]]}
 
 		assertEquals("((a = ($$A1$$ + $$A2$$)) and (b = ($$B1$$ + $$B2$$)))",
-				inst.formulate(bounds.clone(), x, formula, false).toString());
+				inst.formulate(x, formula, false, bounds.clone()).toString());
 
-		formula = formula.and(inst.formulate(bounds, x, formula, false).not());
+		formula = formula.and(inst.formulate(x, formula, false, bounds).not());
 
 		inst = new Instance(uni);
 		inst.add(a, f.range(f.tuple("A1"),f.tuple("A2")));
@@ -109,7 +109,7 @@ public class ReificationTests {
 //		relations: {a=[[A1], [A2]], b=[[B2]], $$A1$$=[[A1]], $$A2$$=[[A2]], $$B1$$=[[B1]], $$B2$$=[[B2]], $$A0$$=[[A0]], $$B0$$=[[B0]]}
 
 		assertEquals("((a = ($$A1$$ + $$A2$$)) and (b = $$B2$$))",
-				inst.formulate(bounds.clone(), x, formula, false).toString());
+				inst.formulate(x, formula, false, bounds.clone()).toString());
 
 	}
 
@@ -159,7 +159,7 @@ public class ReificationTests {
 
 		assertEquals(
 				"(((a = none) and after((a = (($$A0$$ + $$A1$$) + $$A2$$)))) and always((((a = none) implies after(after((a = none)))) and ((a = (($$A0$$ + $$A1$$) + $$A2$$)) implies after(after((a = (($$A0$$ + $$A1$$) + $$A2$$))))))))",
-				inst.formulate(bounds.clone(), x, formula, false).toString());
+				inst.formulate(x, formula, false, bounds.clone()).toString());
 
 		inst0 = new Instance(uni);
 		inst0.add(a, f.setOf("A"+(n-1)));
@@ -178,7 +178,7 @@ public class ReificationTests {
 
 		assertEquals(
 				"(((a = $$A2$$) and after((a = ($$A0$$ + $$A1$$)))) and always((((a = $$A2$$) implies after(after((a = $$A2$$)))) and ((a = ($$A0$$ + $$A1$$)) implies after(after((a = ($$A0$$ + $$A1$$))))))))",
-				inst.formulate(bounds.clone(), x, formula, false).toString());
+				inst.formulate(x, formula, false, bounds.clone()).toString());
 	}
 
 	/* Temporal reification. */
@@ -233,7 +233,7 @@ public class ReificationTests {
 
 		assertEquals(
 				"((((a = ($$A1$$ + $$A2$$)) and (b = none)) and after((((a = ($$A0$$ + $$A2$$)) and (b = $$B2$$)) and after(((a = $$A1$$) and (b = $$B1$$)))))) and after(always(((((a = ($$A0$$ + $$A2$$)) and (b = $$B2$$)) implies after(after(((a = ($$A0$$ + $$A2$$)) and (b = $$B2$$))))) and (((a = $$A1$$) and (b = $$B1$$)) implies after(after(((a = $$A1$$) and (b = $$B1$$)))))))))",
-				inst.formulate(bounds.clone(), x, formula, false).toString());
+				inst.formulate(x, formula, false, bounds.clone()).toString());
 
 		inst0 = new Instance(uni);
 		inst0.add(a, f.setOf("A2"));
@@ -257,7 +257,7 @@ public class ReificationTests {
 
 		assertEquals(
 				"((((a = $$A2$$) and (b = none)) and after((((a = $$A1$$) and (b = $$B2$$)) and after(((a = ($$A0$$ + $$A2$$)) and (b = $$B1$$)))))) and after(always(((((a = $$A1$$) and (b = $$B2$$)) implies after(after(((a = $$A1$$) and (b = $$B2$$))))) and (((a = ($$A0$$ + $$A2$$)) and (b = $$B1$$)) implies after(after(((a = ($$A0$$ + $$A2$$)) and (b = $$B1$$)))))))))",
-				inst.formulate(bounds.clone(), x, formula, false).toString());
+				inst.formulate(x, formula, false, bounds.clone()).toString());
 
 	}
 
@@ -532,9 +532,9 @@ public class ReificationTests {
 
 //		relations: {a=[[A2]], b=[[B2]]}
 
-		assertEquals("((a = $$A2$$) and (b = $$B2$$))", inst.formulate(bounds.clone(), x, formula, true).toString());
+		assertEquals("((a = A2) and (b = B2))", inst.formulate(x, formula, true, bounds.clone()).toString());
 
-		formula = formula.and(inst.formulate(bounds, x, formula, true).not());
+		formula = formula.and(inst.formulate(x, formula, true, bounds).not());
 
 		inst = new Instance(uni);
 		inst.add(a, f.setOf("A1","A2"));
@@ -546,10 +546,10 @@ public class ReificationTests {
 
 //		relations: {a=[[A1], [A2]], b=[[B1], [B2]], $$A2$$=[[A2]], $$B2$$=[[B2]], $$A0$$=[[A0]], $$A1$$=[[A1]], $$B0$$=[[B0]], $$B1$$=[[B1]]}
 
-		assertEquals("((a = ($$A1$$ + $$A2$$)) and (b = ($$B1$$ + $$B2$$)))",
-				inst.formulate(bounds.clone(), x, formula, true).toString());
+		assertEquals("((a = (A1 + A2)) and (b = (B1 + B2)))",
+				inst.formulate(x, formula, true, bounds.clone()).toString());
 
-		formula = formula.and(inst.formulate(bounds, x, formula, true).not());
+		formula = formula.and(inst.formulate(x, formula, true, bounds).not());
 
 		inst = new Instance(uni);
 		inst.add(a, f.setOf("A1","A2"));
@@ -561,8 +561,8 @@ public class ReificationTests {
 
 //		relations: {a=[[A1], [A2]], b=[[B2]], $$A1$$=[[A1]], $$A2$$=[[A2]], $$B1$$=[[B1]], $$B2$$=[[B2]], $$A0$$=[[A0]], $$B0$$=[[B0]]}
 
-		assertEquals("((a = ($$A1$$ + $$A2$$)) and (b = $$B2$$))",
-				inst.formulate(bounds.clone(), x, formula, true).toString());
+		assertEquals("((a = (A1 + A2)) and (b = B2))",
+				inst.formulate(x, formula, true, bounds.clone()).toString());
 
 	}
 
@@ -616,7 +616,7 @@ public class ReificationTests {
 
 		assertEquals(
 				"(some [A1: one univ, B2: one univ, A2: one univ, B0: one univ, A0: one univ, B1: one univ] | (((((((A1 + B2) + A2) + B0) + A0) + B1) = univ) and (((a = none) and after((a = ((A0 + A1) + A2)))) and always((((a = none) implies after(after((a = none)))) and ((a = ((A0 + A1) + A2)) implies after(after((a = ((A0 + A1) + A2))))))))))",
-				inst.formulate(bounds.clone(), x, formula, true).toString());
+				inst.formulate(x, formula, true, bounds.clone()).toString());
 
 		inst0 = new Instance(uni);
 		inst0.add(a, f.setOf("A2"));
@@ -635,7 +635,7 @@ public class ReificationTests {
 		
 		assertEquals(
 				"(some [A1: one univ, B2: one univ, A2: one univ, B0: one univ, A0: one univ, B1: one univ] | (((((((A1 + B2) + A2) + B0) + A0) + B1) = univ) and (((a = A2) and after((a = (A0 + A1)))) and always((((a = A2) implies after(after((a = A2)))) and ((a = (A0 + A1)) implies after(after((a = (A0 + A1))))))))))",
-				inst.formulate(bounds.clone(), x, formula, true).toString());
+				inst.formulate(x, formula, true, bounds.clone()).toString());
 
 	}
 
@@ -691,7 +691,7 @@ public class ReificationTests {
 
 		assertEquals(
 				"(some [A1: one univ, B2: one univ, A2: one univ, B0: one univ, A0: one univ, B1: one univ] | (((((((A1 + B2) + A2) + B0) + A0) + B1) = univ) and ((((a = (A1 + A2)) and (b = none)) and after((((a = none) and (b = B2)) and after(((a = A0) and (b = B2)))))) and after(always(((((a = none) and (b = B2)) implies after(after(((a = none) and (b = B2))))) and (((a = A0) and (b = B2)) implies after(after(((a = A0) and (b = B2)))))))))))",
-				inst.formulate(bounds.clone(), x, formula, true).toString());
+				inst.formulate(x, formula, true, bounds.clone()).toString());
 
 		inst0 = new Instance(uni);
 		inst0.add(a, f.setOf("A1","A2"));
@@ -715,7 +715,7 @@ public class ReificationTests {
 
 		assertEquals(
 				"(some [A1: one univ, B2: one univ, A2: one univ, B0: one univ, A0: one univ, B1: one univ] | (((((((A1 + B2) + A2) + B0) + A0) + B1) = univ) and ((((a = (A1 + A2)) and (b = none)) and after((((a = none) and (b = B2)) and after(((a = A0) and (b = B2)))))) and after(always(((((a = none) and (b = B2)) implies after(after(((a = none) and (b = B2))))) and (((a = A0) and (b = B2)) implies after(after(((a = A0) and (b = B2)))))))))))",
-				inst.formulate(bounds.clone(), x, formula, true).toString());
+				inst.formulate(x, formula, true, bounds.clone()).toString());
 
 	}
 

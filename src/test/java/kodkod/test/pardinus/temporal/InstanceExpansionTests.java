@@ -415,7 +415,7 @@ public class InstanceExpansionTests {
 		PardinusSolver solver = new PardinusSolver(opt);
 
 		Explorer<Solution> solution = solver.solveAll(formula, bounds);
-		TemporalInstance inst = (TemporalInstance) solution.next().instance();
+		TemporalInstance inst = (TemporalInstance) solution.nextC().instance();
 		Evaluator e1 = new Evaluator(inst);
 		for (int i = 0; i < inst.prefixLength() + 3; i++) {
 			Evaluator e2 = new Evaluator(inst.state(i));

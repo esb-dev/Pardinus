@@ -1,7 +1,7 @@
 Pardinus
 =======
 
-Pardinus is Kodkod's (slightly bulkier) Iberian cousin.
+Pardinus is Kodkod's (slightly bulkier) Iberian cousin. 
 
 <a href="https://travis-ci.org/haslab/Pardinus"><img align="right" alt="Build Status" src="https://travis-ci.org/haslab/Pardinus.svg?branch=master"/></a>
 
@@ -52,6 +52,9 @@ point to the JDK 8 home directory.
 - Tiago Guimarães, HASLab, INESC TEC & Universidade do Minho, Portugal, 2013 - 2014
 
 ## History
+### Pardinus ([1.2.0](https://github.com/haslab/Pardinus/releases/tag/v1.2)) (August 2020)
+- Major [changes](https://github.com/haslab/Pardinus/pull/40) to iteration operations
+
 ### Pardinus ([1.1.0](https://github.com/haslab/Pardinus/releases/tag/v1.1)) (April 2019)
 - Major [changes](https://github.com/haslab/Pardinus/pull/29) to the solving engine
 

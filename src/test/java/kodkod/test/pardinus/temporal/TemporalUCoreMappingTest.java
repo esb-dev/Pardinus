@@ -111,7 +111,7 @@ public class TemporalUCoreMappingTest {
         assertFalse(hCore.contains(f10));
         assertFalse(hCore.contains(f11));
         
-        System.out.println(hCore);
+        opt.reporter().debug(hCore.toString());
 	}
 	
 	@Test
@@ -161,7 +161,7 @@ public class TemporalUCoreMappingTest {
         assertFalse(hCore.contains(f10));
         assertFalse(hCore.contains(f11));
         
-        System.out.println(hCore);
+        opt.reporter().debug(hCore.toString());
 	}
 	
 	@Test
@@ -211,7 +211,7 @@ public class TemporalUCoreMappingTest {
         assertFalse(hCore.contains(f10));
         assertTrue(hCore.contains(f11));
         
-        System.out.println(hCore);
+        opt.reporter().debug(hCore.toString());
 	}
 
 	@Test
@@ -264,7 +264,7 @@ public class TemporalUCoreMappingTest {
         assertFalse(hCore.contains(f11));
         assertFalse(hCore.contains(f20));
         
-        System.out.println(hCore);
+        opt.reporter().debug(hCore.toString());
 	}
 	
 	@Test
@@ -317,7 +317,7 @@ public class TemporalUCoreMappingTest {
         assertFalse(hCore.contains(f11));
         assertTrue(hCore.contains(f20));
         
-        System.out.println(hCore);
+        opt.reporter().debug(hCore.toString());
 	}
 	
 	
@@ -371,7 +371,7 @@ public class TemporalUCoreMappingTest {
         assertTrue(hCore.contains(f11));
         assertTrue(hCore.contains(f20));
         
-        System.out.println(hCore);
+        opt.reporter().debug(hCore.toString());
 	}
 	
 	@Test
@@ -422,7 +422,7 @@ public class TemporalUCoreMappingTest {
         assertFalse(hCore.contains(f10));
         assertFalse(hCore.contains(f11));
         
-        System.out.println(hCore);
+        opt.reporter().debug(hCore.toString());
 	}
 
 }

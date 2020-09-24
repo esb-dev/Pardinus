@@ -36,7 +36,6 @@ import kodkod.engine.Solution.Outcome;
 import kodkod.engine.config.DecomposedOptions.DMode;
 import kodkod.engine.config.AbstractReporter;
 import kodkod.engine.config.ExtendedOptions;
-import kodkod.engine.config.SLF4JReporter;
 import kodkod.engine.config.Options;
 import kodkod.engine.config.Reporter;
 import kodkod.engine.decomp.DModel;

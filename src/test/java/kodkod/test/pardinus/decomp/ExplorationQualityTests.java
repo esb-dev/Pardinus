@@ -364,45 +364,33 @@ public class ExplorationQualityTests {
 		
 		// just fixing, solution never changes
 		sol = sols.nextS(2,2, new HashSet<Relation>());
-		assertTrue(sol.sat());
+		assertFalse(sol.sat());
 		assertTrue(sols.hasNext());
-		assertEquals(4, ((TemporalInstance) sol.instance()).prefixLength());	
-		opt.reporter().debug(sol.instance().toString());
 
 		// just fixing, solution never changes
 		sol = sols.nextS(2,2, new HashSet<Relation>());
-		assertTrue(sol.sat());
+		assertFalse(sol.sat());
 		assertTrue(sols.hasNext());
-		assertEquals(4, ((TemporalInstance) sol.instance()).prefixLength());	
-		opt.reporter().debug(sol.instance().toString());
 
 		// just fixing, solution never changes
 		sol = sols.nextS(2,2, new HashSet<Relation>());
-		assertTrue(sol.sat());
+		assertFalse(sol.sat());
 		assertTrue(sols.hasNext());
-		assertEquals(4, ((TemporalInstance) sol.instance()).prefixLength());	
-		opt.reporter().debug(sol.instance().toString());
 
 		// just fixing, solution never changes
 		sol = sols.nextS(2,2, new HashSet<Relation>());
-		assertTrue(sol.sat());
+		assertFalse(sol.sat());
 		assertTrue(sols.hasNext());
-		assertEquals(4, ((TemporalInstance) sol.instance()).prefixLength());	
-		opt.reporter().debug(sol.instance().toString());
 
 		// beyond prefix length, must unroll
 		sol = sols.nextS(2,5, new HashSet<Relation>());
-		assertTrue(sol.sat());
+		assertFalse(sol.sat());
 		assertTrue(sols.hasNext());
-		assertEquals(7, ((TemporalInstance) sol.instance()).prefixLength());	
-		opt.reporter().debug(sol.instance().toString());
 
 		// prefix is already fixed up to 6
 		sol = sols.nextS(0,1, new HashSet<Relation>());
-		assertTrue(sol.sat());
+		assertFalse(sol.sat());
 		assertTrue(sols.hasNext());
-		assertEquals(7, ((TemporalInstance) sol.instance()).prefixLength());	
-		opt.reporter().debug(sol.instance().toString());
 		
 		// beyond the maximum trace length
 		sol = sols.nextS(9,2, new HashSet<Relation>());

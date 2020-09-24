@@ -349,8 +349,8 @@ public final class PrettyPrinter {
 		 * parenthesized if it's an instance of binary expression or an if expression. **/
 		// [HASLab]
 		public void visit(TempExpression node) { 
-			keyword(node.op());
 			visitChild(node.expression(), parenthesize(node.op(), node.expression()));
+			append(node.op());
 		}
 
 

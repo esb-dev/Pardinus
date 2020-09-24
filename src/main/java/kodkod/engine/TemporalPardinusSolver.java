@@ -563,6 +563,10 @@ implements KodkodSolver<PardinusBounds, ExtendedOptions>, TemporalSolver<Extende
 		private int iteration_stage = 0;
 
 		private Solution nextNonTrivialSolutionSAT(int state, int steps, Set<Relation> fix, Set<Relation> change) {
+			if (change.isEmpty()) {
+				translation = null;
+				return Solution.unsatisfiable(new Statistics(0, 0, 0, 0, 0), null);
+			}
 
 			boolean isSat = false;
 			long solveTime = 0;
