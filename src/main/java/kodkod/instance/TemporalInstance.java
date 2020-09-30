@@ -272,6 +272,10 @@ public class TemporalInstance extends Instance {
 	 * 
 	 * Will change <bounds> if not all atoms of the universe are present at <reif>.
 	 * 
+	 * NOTE: the <bounds> representing the instance contain a universe that is not
+	 * the one of the original problem; thus, local universe restrictions will only
+	 * consider those atoms.
+	 * 
 	 * @assumes reif != null
 	 * @assumes start >= -1
 	 * @assumes end >= start or end == null

@@ -32,6 +32,7 @@ import kodkod.engine.Explorer;
 import kodkod.engine.PardinusSolver;
 import kodkod.engine.Solution;
 import kodkod.engine.config.ExtendedOptions;
+import kodkod.engine.config.SLF4JReporter;
 import kodkod.engine.satlab.SATFactory;
 import kodkod.instance.PardinusBounds;
 import kodkod.instance.TemporalInstance;
@@ -312,6 +313,91 @@ public class ExplorationQualityTests {
 		sol = sols.nextS(1,1, changes);
 		assertFalse(sol.sat());
 		assertTrue(sols.hasNext());
+
+		solver.free();
+	}
+	
+	@Test
+	public void testSegIterationsGoBack2() {
+		int n = 2;
+
+		Relation a = Relation.unary_variable("a");
+		
+		Object[] atoms = new Object[n*2];
+		for (int i = 0; i < n; i ++)
+			atoms[i] = "A"+i;
+		for (int i = 0; i < n; i ++)
+			atoms[n+i] = "B"+i;
+		
+		Universe uni = new Universe(atoms);
+		TupleFactory f = uni.factory();
+		TupleSet as = f.range(f.tuple("A0"), f.tuple("A"+(n-1)));
+
+		PardinusBounds bounds = new PardinusBounds(uni);
+		bounds.bound(a, as);
+		Formula formula = a.eq(a.prime()).not().always();
+
+		ExtendedOptions opt = new ExtendedOptions();
+
+		opt.setReporter(new SLF4JReporter());
+		opt.setRunTemporal(true);
+		opt.setRunUnbounded(false);
+		opt.setRunDecomposed(false);
+		opt.setMaxTraceLength(10);
+		opt.setSolver(SATFactory.MiniSat);
+		PardinusSolver solver = new PardinusSolver(opt);
+		
+		Set<Relation> changes = new HashSet<Relation>();
+		changes.add(a);
+		
+		Explorer<Solution> sols = (Explorer<Solution>) solver.solveAll(formula, bounds);
+		Solution sol = sols.next();
+		assertTrue(sol.sat());
+		assertTrue(sols.hasNext());
+		opt.reporter().debug(sol.instance().toString());
+		assertEquals(2, ((TemporalInstance) sol.instance()).prefixLength());
+		
+		// fixes prefix up to two
+		sol = sols.nextS(5,1, changes);
+		assertTrue(sol.sat());
+		assertTrue(sols.hasNext());
+		opt.reporter().debug(sol.instance().toString());
+		assertEquals(6, ((TemporalInstance) sol.instance()).prefixLength());	
+
+		// state 1 is fixed but 2 can still change
+		sol = sols.nextS(1,1,changes);
+		assertTrue(sol.sat());
+		assertTrue(sols.hasNext());
+		opt.reporter().debug(sol.instance().toString());
+		assertEquals(2, ((TemporalInstance) sol.instance()).prefixLength());	
+
+		sol = sols.nextS(5,1, changes);
+		assertTrue(sol.sat());
+		assertTrue(sols.hasNext());
+		opt.reporter().debug(sol.instance().toString());
+		assertEquals(6, ((TemporalInstance) sol.instance()).prefixLength());	
+
+		// state 1 is fixed but 2 can still change
+		sol = sols.nextS(1,1,changes);
+		assertFalse(sol.sat());
+		assertTrue(sols.hasNext());
+
+		sol = sols.nextS(5,1, changes);
+		assertFalse(sol.sat());
+		assertTrue(sols.hasNext());
+
+		// state 1 is fixed but 2 can still change
+		sol = sols.nextS(0,1,changes);
+		assertTrue(sol.sat());
+		assertTrue(sols.hasNext());
+		opt.reporter().debug(sol.instance().toString());
+		assertEquals(2, ((TemporalInstance) sol.instance()).prefixLength());	
+
+		sol = sols.nextS(5,1, changes);
+		assertTrue(sol.sat());
+		assertTrue(sols.hasNext());
+		opt.reporter().debug(sol.instance().toString());
+		assertEquals(6, ((TemporalInstance) sol.instance()).prefixLength());	
 
 		solver.free();
 	}

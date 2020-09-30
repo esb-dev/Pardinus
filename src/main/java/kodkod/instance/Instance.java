@@ -269,6 +269,9 @@ public class Instance implements Cloneable {
 	 * Will change <bounds> if not all atoms of the universe are present at <reif>
 	 * and <someDisj> false.
 	 * 
+ 	 * NOTE: the <bounds> representing the instance contain a universe that is not
+	 * the one of the original problem; thus, local universe restrictions will only
+	 * consider those atoms.
 	 * @assumes reif != null
 	 * @assumes !someDisj => bounds != null
 	 * @param reif the previously reified atoms, as relations or quantified vars depending on <someDisj>

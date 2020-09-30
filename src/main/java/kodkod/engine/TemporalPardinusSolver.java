@@ -343,7 +343,7 @@ implements KodkodSolver<PardinusBounds, ExtendedOptions>, TemporalSolver<Extende
 			if (delta < 1)
 				throw new IllegalArgumentException("Cannot iterate boundless with s != 0, breaks completeness.");
 
-			if (translation == null)
+			if (translation == null && !(iteration_stage == 2 && state < last_segment))
 				return Solution.triviallyUnsatisfiable(new Statistics(0, 0, 0, 0, 0), null);
 			try {
 				Set<Relation> fix = new HashSet<Relation>();
@@ -351,10 +351,19 @@ implements KodkodSolver<PardinusBounds, ExtendedOptions>, TemporalSolver<Extende
 					fix.addAll(tmptrans.bounds.relations().stream().filter(r -> !r.isVariable())
 							.collect(Collectors.toSet()));
 
+				// if reducing prefix, restart the process
+				// this will force the re-generation of the solver at minimal length
+				if (iteration_stage == 2 && state < last_segment) {
+					previousSols.removeIf(s -> s.start > state);
+					current_trace = Math.max(1,state);
+					translation = null;
+				}
+				
 				if (previousSol != null)
 					iteration_stage = 2;
-
-				return translation.trivial() ? nextTrivialSolution() : nextNonTrivialSolution(state, delta, fix, change);
+				
+				last_segment = state;
+				return (translation != null && translation.trivial()) ? nextTrivialSolution() : nextNonTrivialSolution(state, delta, fix, change);
 			} catch (SATAbortedException sae) {
 				translation.cnf().free();
 				throw new AbortedException(sae);
@@ -561,6 +570,7 @@ implements KodkodSolver<PardinusBounds, ExtendedOptions>, TemporalSolver<Extende
 		}
 
 		private int iteration_stage = 0;
+		private int last_segment = 0;
 
 		private Solution nextNonTrivialSolutionSAT(int state, int steps, Set<Relation> fix, Set<Relation> change) {
 			if (change.isEmpty()) {
