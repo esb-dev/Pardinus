@@ -245,6 +245,7 @@ public class ElectrodSolver implements UnboundedSolver<ExtendedOptions>,
 		builder.redirectErrorStream(true);
 		int ret = -1;
 		final Process p;
+		String op = "";
 		try {
 			options.reporter().solvingCNF(-1, -1, -1, -1);
 			p = builder.start();
@@ -278,7 +279,8 @@ public class ElectrodSolver implements UnboundedSolver<ExtendedOptions>,
 
 				String oline = "";
 				while ((oline = output.readLine()) != null)
-					rep.debug(oline);
+					op += oline;
+				rep.debug(oline);
 
 				ret = p.waitFor();
 			} catch (InterruptedException e) {
@@ -291,7 +293,7 @@ public class ElectrodSolver implements UnboundedSolver<ExtendedOptions>,
 		
 		if (ret != 0) {
 			rep.warning("Electrod exit code: "+ret);
-			throw new AbortedException("Electrod exit code: "+ret);
+			throw new AbortedException("Electrod exit code: "+ret+".\n"+op);
 		}
 		else
 			rep.debug("Electrod ran successfully.");
