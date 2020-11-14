@@ -133,18 +133,21 @@ public class NativeSolverTest {
 	
 	@Test
 	public void testPlingelingOneThread() {
+		if (!SATFactory.available(SATFactory.plingeling())) return;
 		final SATFactory pl = SATFactory.plingeling(1,null);
 		assertEquals(Outcome.UNSATISFIABLE, solveWith(pl));
 	}
 	
 	@Test
 	public void testPlingelingPortfolio() {
+		if (!SATFactory.available(SATFactory.plingeling())) return;
 		final SATFactory pl = SATFactory.plingeling(null,true);
 		assertEquals(Outcome.UNSATISFIABLE, solveWith(pl));
 	}
 	
 	@Test
 	public void testPlingelingThreeThreadsPortfolio() {
+		if (!SATFactory.available(SATFactory.plingeling())) return;
 		final SATFactory pl = SATFactory.plingeling(3,true);
 		assertEquals(Outcome.UNSATISFIABLE, solveWith(pl));
 	}

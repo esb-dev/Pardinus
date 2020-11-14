@@ -121,6 +121,11 @@ public final class RunTests {
 		log.append("\n------\n");
 		log.append(formatter.format(new Date()));
 		log.append("\n");
+		log.append("Analysis: ");
+		log.append(iterate == 1?"IterateC ":(iterate == 2?"IterateP ":"Solve "));
+		if (quick) log.append("Quick ");
+		if (satonly) log.append("SatsOnly ");
+		log.append("\n");
 		log.append("Examples: ");
 		if (hotel) log.append("Hotel ");
 		if (ring) log.append("RingLeader ");
@@ -180,9 +185,30 @@ public final class RunTests {
 		return caches;
 	}
 	
+	private static Set<String> getCachedIterateCs() {
+		Set<String> caches = new HashSet<>();
+		BufferedReader reader;
+		try {
+			reader = new BufferedReader(new FileReader("../cached_iteratecs.txt"));
+			String line = reader.readLine();
+			while (line != null) {
+				caches.add(line);
+				line = reader.readLine();
+			}
+			reader.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return caches;
+	}
+	
 	static Set<String> cached_timeouts_solve = getCachedSolves();
 	
-	static Set<String> cached_timeouts_iteratec = new HashSet<>();
+	static Set<String> cached_timeouts_iteratec = getCachedIterateCs();
 
 	static Set<String> cached_timeouts_iteratep = new HashSet<>();
 	
@@ -383,27 +409,26 @@ public final class RunTests {
 		RingT2.Variant1 v;
 
 		if (!satonly) {  
-			v = RingT2.Variant1.GOODLIVENESS;
-			for (int i = 1; i <= (quick?6:8); i++) {
-				runModes(model, new String[] { i + "", v.name() });
-			}
-			
 			v = RingT2.Variant1.GOODSAFETY;
 			for (int i = 1; i <= (quick?6:8); i++) {
 				runModes(model, new String[] { i + "", v.name() });
 			}
-		}
-		v = RingT2.Variant1.SCENARIO;
-		for (int i = 1; i <= (quick?6:12); i++) {
-			runModes(model, new String[] { i + "", v.name() });
+
+			v = RingT2.Variant1.GOODLIVENESS;
+			for (int i = 1; i <= (quick?6:8); i++) {
+				runModes(model, new String[] { i + "", v.name() });
+			}
 		}
 
 		v = RingT2.Variant1.BADLIVENESS;
-		for (int i = 1; i <= (quick?6:12); i++) { 
+		for (int i = 1; i <= (quick?7:12); i++) { 
 			runModes(model, new String[] { i + "", v.name() });
 		}
 
-
+		v = RingT2.Variant1.SCENARIO;
+		for (int i = 1; i <= (quick?7:12); i++) {
+			runModes(model, new String[] { i + "", v.name() });
+		}
 	}
 
 	private static void runSpanTree() throws IOException, InterruptedException {
@@ -441,12 +466,12 @@ public final class RunTests {
 		String model = DijkstraT.class.getCanonicalName();
 		DijkstraT.Variant v;
 		v = DijkstraT.Variant.SHOW;
-		for (int i = 1; i <= (quick?12:20); i ++)  {
+		for (int i = 1; i <= (quick?11:20); i ++)  {
 			runModes(model, new String[]{i+"",v.name()});
 		}
 		if (!satonly) {
 			v = DijkstraT.Variant.DEADLOCKS;
-			for (int i = 1; i <= (quick?12:20); i ++)  {
+			for (int i = 1; i <= (quick?11:20); i ++)  {
 				runModes(model, new String[]{i+"",v.name()});
 			}
 		}
@@ -459,7 +484,7 @@ public final class RunTests {
 		String model = HotelT.class.getCanonicalName();
 		HotelT.Variant v;
 		v = HotelT.Variant.INTERVENES;
-		for (int i = 1; i <= (quick?4:10); i++) {
+		for (int i = 1; i <= (quick?6:10); i++) {
 			runModes(model, new String[] { i + "", v.name() });
 		}
 		if (!satonly) {
