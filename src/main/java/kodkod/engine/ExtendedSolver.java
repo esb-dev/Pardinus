@@ -49,6 +49,7 @@ import kodkod.util.ints.IntIterator;
  * @modified Nuno Macedo // [HASLab] model finding hierarchy
  * @modified Nuno Macedo // [HASLab] decomposed model finding
  * @modified Tiago Guimarães, Nuno Macedo // [HASLab] target-oriented model finding
+ * @modified Tim Nelson (Retargeter, DefaultRetargeter)
  */
 public class ExtendedSolver extends AbstractKodkodSolver<PardinusBounds,ExtendedOptions> implements
 		TargetOrientedSolver<ExtendedOptions>,
@@ -155,10 +156,9 @@ public class ExtendedSolver extends AbstractKodkodSolver<PardinusBounds,Extended
 		private Solution nextNonTrivialSolution() {
 			final Translation.Whole transl = translation;
 			final SATSolver cnf = transl.cnf();
-			final int primaryVars = transl.numPrimaryVariables();
 			if (opt.targetoriented()) {
-				
-				final TMode mode = opt.targetMode();
+				Retargeter retargeter =
+						(opt.retargeter() == null) ? new DefaultRetargeter() : opt.retargeter();
 	
 				// [HASLab] add the targets to generate the following solution
 				// during solution iteration targets are added directly to the
@@ -166,43 +166,20 @@ public class ExtendedSolver extends AbstractKodkodSolver<PardinusBounds,Extended
 				// reconstructed at each step
 				try {				
 					cnf.valueOf(1); // fails if no previous solution
-					TargetSATSolver tcnf = (TargetSATSolver) cnf;
-					tcnf.clearTargets();
-					// [HASLab] if there are weights must iterate through the relations to find the literal's owner
-					if (weights != null) {
-						WTargetSATSolver wcnf = (WTargetSATSolver) cnf;
-						for (Relation r : transl.bounds().relations()) {
-							Integer w = weights.get(r.name());
-							if (r.name().equals("Int/next") || r.name().equals("seq/Int") || r.name().equals("String")) {}
-							else {
-								if (w==null) { w = 1; }
-								IntIterator is = transl.primaryVariables(r).iterator();
-								while (is.hasNext()) {
-									int i = is.next();
-									// [HASLab] add current model as weighted target
-									if (mode == TMode.CLOSE) wcnf.addWeight(cnf.valueOf(i) ? i : -i,w);
-									if (mode == TMode.FAR) wcnf.addWeight(cnf.valueOf(i) ? -i : i,w);
-								}
-							}
-						}
-					}
-					// [HASLab] if there are no weights may simply iterate literals
-					else {
-						for(int i = 1; i <= primaryVars; i++) {
-							// [HASLab] add current model as target
-							if (mode == TMode.CLOSE) tcnf.addTarget(cnf.valueOf(i) ? i : -i);
-							if (mode == TMode.FAR) tcnf.addTarget(cnf.valueOf(i) ? -i : i);
-						}
-					}
+					assert(opt == transl.options()); // assume: opts unmodified
+					retargeter.retarget(transl);
+
 				} 
 				catch(IllegalStateException e) { }
 	
 			}
-			opt.reporter().solvingCNF(0, primaryVars, cnf.numberOfVariables(), cnf.numberOfClauses()); // [HASLab]
+			opt.reporter().solvingCNF(0, transl.numPrimaryVariables(), cnf.numberOfVariables(), cnf.numberOfClauses()); // [HASLab]
 			
 			final long startSolve = System.currentTimeMillis();
 			final boolean isSat = cnf.solve();
 			final long endSolve = System.currentTimeMillis();
+
+			int primaryVars = transl.numPrimaryVariables();
 
 			final Statistics stats = new Statistics(transl, translTime, endSolve - startSolve);
 			final Solution sol;
@@ -302,7 +279,48 @@ public class ExtendedSolver extends AbstractKodkodSolver<PardinusBounds,Extended
 			return next();
 		}
 
-}	
+		/**
+		 * Implements the default behavior of retargeting to the last instance found.
+		 * Uses the options' targetMode to decide whether to seek far from or close to the target.
+		 */
+		private class DefaultRetargeter implements Retargeter {
+
+			@Override
+			public void retarget(Translation transl) {
+				assert(transl.cnf() instanceof TargetSATSolver);
+				TargetSATSolver tcnf = (TargetSATSolver)transl.cnf();
+				assert(transl.options() instanceof ExtendedOptions);
+				ExtendedOptions opts = (ExtendedOptions) transl.options();
+				tcnf.clearTargets();
+				// [HASLab] if there are weights must iterate through the relations to find the literal's owner
+				if (weights != null) {
+					WTargetSATSolver wcnf = (WTargetSATSolver) tcnf;
+					for (Relation r : transl.bounds().relations()) {
+						Integer w = weights.get(r.name());
+						if (r.name().equals("Int/next") || r.name().equals("seq/Int") || r.name().equals("String")) {}
+						else {
+							if (w==null) { w = 1; }
+							IntIterator is = transl.primaryVariables(r).iterator();
+							while (is.hasNext()) {
+								int i = is.next();
+								// [HASLab] add current model as weighted target
+								if (opts.targetMode() == TMode.CLOSE) wcnf.addWeight(tcnf.valueOf(i) ? i : -i,w);
+								if (opts.targetMode() == TMode.FAR) wcnf.addWeight(tcnf.valueOf(i) ? -i : i,w);
+							}
+						}
+					}
+				}
+				// [HASLab] if there are no weights may simply iterate literals
+				else {
+					for(int i = 1; i <= transl.numPrimaryVariables(); i++) {
+						// [HASLab] add current model as target
+						if (opts.targetMode() == TMode.CLOSE) tcnf.addTarget(tcnf.valueOf(i) ? i : -i);
+						if (opts.targetMode() == TMode.FAR) tcnf.addTarget(tcnf.valueOf(i) ? -i : i);
+					}
+				}
+			}
+		}
+	}
 	
 	// [HASLab]
 	@Override

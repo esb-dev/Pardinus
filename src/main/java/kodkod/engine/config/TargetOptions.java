@@ -22,6 +22,7 @@
  */
 package kodkod.engine.config;
 
+import kodkod.engine.Retargeter;
 import kodkod.engine.TargetOrientedSolver;
 
 /**
@@ -51,6 +52,21 @@ public interface TargetOptions extends PardinusOptions {
 	 * @return the target-oriented mode followed by the solver.
 	 */
 	public TMode targetMode();
+
+	/**
+	 * Provides the solver with a re-targeting strategy to
+	 * apply between instances returned. If null, will apply
+	 * Pardinus standard re-targeting.
+	 *
+	 * @param r retargeting strategy object
+	 */
+	void setRetargeter(Retargeter r);
+
+	/**
+	 * Get the current retargeting strategy
+	 * @return the retargeting strategy used by the solver
+	 */
+	public Retargeter retargeter();
 
 	/**
 	 * Instructs the {@link TargetOrientedSolver solver} to solve the problem in

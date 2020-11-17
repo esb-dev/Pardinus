@@ -22,6 +22,8 @@
  */
 package kodkod.engine.config;
 
+import kodkod.engine.Retargeter;
+
 /**
  * Stores information about various user-level translation and analysis options.
  * with support for every Pardinus functionality (temporal, unbounded,
@@ -59,12 +61,14 @@ public class ExtendedOptions extends Options implements BoundedOptions,
 		this.trace_length = options.trace_length;
 		this.min_trace_length = options.min_trace_length;
 		this.name = options.name;
+		this.retargeter = options.retargeter;
 	}
 
 	// target-oriented solving
 
 	private boolean run_target = false;
 	private TMode target_mode = TMode.CLOSE;
+	private Retargeter retargeter = null;
 	/**
 	 * {@inheritDoc}
 	 */
@@ -85,6 +89,19 @@ public class ExtendedOptions extends Options implements BoundedOptions,
 	 */
 	public TMode targetMode() {
 		return target_mode;
+	}
+
+	@Override
+	/**
+	 * See {@link Retargeter}.
+	 */
+	public void setRetargeter(Retargeter r) {
+		this.retargeter = r;
+	}
+
+	@Override
+	public Retargeter retargeter() {
+		return retargeter;
 	}
 
 	/**
@@ -259,6 +276,7 @@ public class ExtendedOptions extends Options implements BoundedOptions,
 		c.setMaxTraceLength(trace_length);
 		c.setMinTraceLength(min_trace_length);
 		c.name = name;
+		c.setRetargeter(retargeter);
 		return c;
 	}
 
@@ -286,6 +304,8 @@ public class ExtendedOptions extends Options implements BoundedOptions,
 		b.append(trace_length);
 		b.append("\n run unbounded: ");
 		b.append(run_unbounded);
+		b.append("\n custom retargeter?: ");
+		b.append(retargeter != null);
 		return b.toString();
 	}
 
@@ -305,5 +325,7 @@ public class ExtendedOptions extends Options implements BoundedOptions,
 		this.name = name;
 		return true;
 	}
+
+
 
 }
