@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Stack;
 
 import kodkod.ast.Formula;
 import kodkod.engine.Explorer;
@@ -85,18 +86,19 @@ public class SymmetryTests {
 		opt.setDecomposedMode(DMode.HYBRID);
 		opt.setThreads(4);
 		Reporter rep = new AbstractReporter() {
-			private Bounds bounds;
+			private Stack<Bounds> boundss;
 
 			@Override
 			public void detectingSymmetries(Bounds bounds) {
 				super.detectingSymmetries(bounds);
-				this.bounds = bounds;
+				boundss.push(bounds);
 			}
 
 			@Override
 			public void detectedSymmetries(Set<IntSet> parts) {
 				if (last == null) last = new HashSet<IntSet>(parts);
 				Set<Set<Object>> x = new HashSet<Set<Object>>();
+				Bounds bounds = boundss.pop();
 				for (IntSet y : parts) {
 					Set<Object> z = new HashSet<Object>();
 					for (int w : y.toArray())

@@ -3,7 +3,7 @@ Pardinus
 
 Pardinus is Kodkod's (slightly bulkier) Iberian cousin. 
 
-<a href="https://travis-ci.org/haslab/Pardinus"><img align="right" alt="Build Status" src="https://travis-ci.org/haslab/Pardinus.svg?branch=master"/></a>
+<a href="https://travis-ci.com/haslab/Pardinus"><img align="right" alt="Build Status" src="https://travis-ci.com/haslab/Pardinus.svg?branch=master"/></a>
 
 This repository includes the source code for the Pardinus solver, an extension to the [Kodkod](http://alloy.mit.edu/kodkod/index.html) solver for relational logic. It extends Kodkod with the following functionalities:
 * Target-oriented and weighted-target oriented model finding
@@ -52,40 +52,40 @@ point to the JDK 8 home directory.
 - Tiago Guimarães, HASLab, INESC TEC & Universidade do Minho, Portugal, 2013 - 2014
 
 ## History
-### Pardinus ([1.2.0](https://github.com/haslab/Pardinus/releases/tag/v1.2)) (August 2020)
+#### Pardinus ([1.2.0](https://github.com/haslab/Pardinus/releases/tag/v1.2)) (August 2020)
 - Major [changes](https://github.com/haslab/Pardinus/pull/40) to iteration operations
 
-### Pardinus ([1.1.0](https://github.com/haslab/Pardinus/releases/tag/v1.1)) (April 2019)
+#### Pardinus ([1.1.0](https://github.com/haslab/Pardinus/releases/tag/v1.1)) (April 2019)
 - Major [changes](https://github.com/haslab/Pardinus/pull/29) to the solving engine
 
-### Pardinus ([1.0.0](https://github.com/haslab/Pardinus/releases/tag/v1.0)) (January 2018)
+#### Pardinus ([1.0.0](https://github.com/haslab/Pardinus/releases/tag/v1.0)) (January 2018)
 <!--- FM,ABZ 18 submissions --->
 - Support for unbounded model finding in SMV through [Electrod](https://github.com/grayswandyr/electrod/releases/tag/0.1)
 - Support for [Electrum Analyzer 1.0](https://github.com/haslab/Electrum/releases/tag/v1.0)
 
-### Pardinus ([0.3.1](https://github.com/haslab/Pardinus/releases/tag/v0.3.1)) (November 2016) 
+#### Pardinus ([0.3.1](https://github.com/haslab/Pardinus/releases/tag/v0.3.1)) (November 2016) 
 <!--- TACAS 17 submission --->
 - Support for symbolic bound declaration
 - Described in the ATVA 17 [paper](https://doi.org/10.1007/978-3-319-68167-2_23)
 
-### Pardinus ([0.3.0](https://github.com/haslab/Pardinus/releases/tag/v0.3.0)) (September 2016) 
+#### Pardinus ([0.3.0](https://github.com/haslab/Pardinus/releases/tag/v0.3.0)) (September 2016) 
 <!--- TRUST Workshop 16 --->
 - Initial support for (past and future) temporal model finding
 - Support for [Electrum Analyzer 0.2](https://github.com/haslab/Electrum/releases/tag/v0.2)
 
-### Pardinus ([0.2.0](https://github.com/haslab/Pardinus/releases/tag/v0.2.0)) (April 2016) 
+#### Pardinus ([0.2.0](https://github.com/haslab/Pardinus/releases/tag/v0.2.0)) (April 2016) 
 <!--- ASE16 submission --->
 - Initial support for decomposed model finding
 - Support for Syrup (parallel Glucose)
 
-### Pardinus (0.1.1) (October 2014) 
+#### Pardinus (0.1.1) (October 2014) 
 <!--- FASE15 submission -->
 - Support for weighted target-oriented model finding
 - Merged Alloy Analyzer's Kodkod 2.0 tweaks into Kodkod 2.1
 - Supported scenario exploration operations from [extended Alloy Analyzer](toalloy.jar)
 - Described in the FASE 15 [paper](http://dx.doi.org/10.1007/978-3-662-46675-9_20)
 
-### Pardinus (0.1.0) (October 2013) 
+#### Pardinus (0.1.0) (October 2013) 
 <!--- FASE14 submission -->
 - Initial support for target-oriented model finding
 - Extended support to Max-SAT SAT4J and Yices
