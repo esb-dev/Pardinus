@@ -86,7 +86,7 @@ public class SymmetryTests {
 		opt.setDecomposedMode(DMode.HYBRID);
 		opt.setThreads(4);
 		Reporter rep = new AbstractReporter() {
-			private Stack<Bounds> boundss;
+			private Stack<Bounds> boundss = new Stack<Bounds>();
 
 			@Override
 			public void detectingSymmetries(Bounds bounds) {
