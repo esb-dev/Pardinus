@@ -497,7 +497,7 @@ public class BaseTests {
 
 	// Regression test, releases bug
 	@Test
-	public void testBug() {
+	public void testBugReleases() {
 		opt.setSolver(SATFactory.MiniSat);
 		opt.setRunTemporal(true);
 		opt.setRunUnbounded(false);
@@ -528,6 +528,35 @@ public class BaseTests {
 		
 		Solution sol = dsolver.solveAll(formula.not(), bounds).next();
 		
-		assertFalse("problem should be sat", sol.sat());
+		assertFalse("problem should be unsat", sol.sat());
+	}
+	
+	// Regression test, no variable sig bug
+	@Test
+	public void testBugOnlyStatic() {
+		opt.setSolver(SATFactory.MiniSat);
+		opt.setRunTemporal(true);
+		opt.setRunUnbounded(false);
+		dsolver = new PardinusSolver(opt);
+
+		int n = 2;
+
+		Relation a = Relation.unary("a");
+
+		Object[] atoms = new Object[n];
+		for (int i = 0; i < n; i++)
+			atoms[i] = "A" + i;
+
+		Universe uni = new Universe(atoms);
+		TupleFactory f = uni.factory();
+		TupleSet as = f.range(f.tuple("A0"), f.tuple("A" + (n - 1)));
+
+		PardinusBounds bounds = new PardinusBounds(uni);
+		bounds.bound(a, as);
+		Formula p = a.some().always();
+		
+		Solution sol = dsolver.solveAll(p, bounds).next();
+		
+		assertTrue("problem should be sat", sol.sat());
 	}
 }
