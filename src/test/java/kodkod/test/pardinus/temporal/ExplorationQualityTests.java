@@ -970,11 +970,11 @@ public class ExplorationQualityTests {
 		Explorer<Solution> sols = (Explorer<Solution>) solver.solveAll(formula, bounds);
 		int c = 0;
 		while (sols.hasNextC()) {
-			sols.nextC();
+			Solution sol = sols.nextC();
 			c++;
 		}
 		
-		assertEquals("nothing to change, should not have iterated",1,c);
+		assertEquals("nothing to change, should not have iterated",2,c);
 		
 		solver.free();
 	}
