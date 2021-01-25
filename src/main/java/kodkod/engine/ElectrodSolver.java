@@ -280,7 +280,7 @@ public class ElectrodSolver implements UnboundedSolver<ExtendedOptions>,
 				String oline = "";
 				while ((oline = output.readLine()) != null)
 					op += oline;
-				rep.debug(oline);
+				rep.debug(op);
 
 				ret = p.waitFor();
 			} catch (InterruptedException e) {
