@@ -173,7 +173,7 @@ public class RingT2 extends DModel {
 	 * @return the declarations and facts of the model
 	 */
 	public Formula invariants() {
-		return traces().and(defineElected())/*.and(declarations())*/;
+		return traces().and(defineElected())/*.and(declarations())*/; // remove decls with symb bounds
 	}
 	
 	public Formula declarations() {
@@ -188,7 +188,7 @@ public class RingT2 extends DModel {
 	 * @return the declarations and facts of the model
 	 */
 	public Formula invariantsFixed() {
-		return traces().and(defineElectedFixed())/*.and(declarations())*/;
+		return traces().and(defineElectedFixed())/*.and(declarations())*/; // remove decls with symb bounds
 	}
 
 	/**
@@ -274,13 +274,14 @@ public class RingT2 extends DModel {
 
 		final PardinusBounds b = new PardinusBounds(u);
 
-		b.bound(outbox, Process.product(Id));
-		b.bound(Elected, Process);
-
 		final TupleFactory f = u.factory();
 		final TupleSet pb = f.range(f.tuple("Process0"), f.tuple("Process" + (n_ps - 1)));
 		final TupleSet ib = f.range(f.tuple("Id0"), f.tuple("Id" + (n_ps - 1)));
+		
+		b.bound(outbox, Process.product(Id));
+		b.bound(Elected, Process);
 
+		// switch with former for symb bounds
 //		b.bound(outbox, pb.product(ib));
 //		b.bound(Elected, pb);
 

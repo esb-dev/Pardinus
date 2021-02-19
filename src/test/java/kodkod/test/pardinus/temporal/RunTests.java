@@ -409,17 +409,17 @@ public final class RunTests {
 		RingT2.Variant1 v;
 
 		if (!satonly) {  
-			v = RingT2.Variant1.GOODSAFETY;
-			for (int i = 1; i <= (quick?6:8); i++) {
-				runModes(model, new String[] { i + "", v.name() });
-			}
 
 			v = RingT2.Variant1.GOODLIVENESS;
 			for (int i = 1; i <= (quick?6:8); i++) {
 				runModes(model, new String[] { i + "", v.name() });
 			}
-		}
-
+			v = RingT2.Variant1.GOODSAFETY;
+			for (int i = 1; i <= (quick?6:8); i++) {
+				runModes(model, new String[] { i + "", v.name() });
+			}
+		} 
+		
 		v = RingT2.Variant1.BADLIVENESS;
 		for (int i = 1; i <= (quick?7:12); i++) { 
 			runModes(model, new String[] { i + "", v.name() });
@@ -429,6 +429,7 @@ public final class RunTests {
 		for (int i = 1; i <= (quick?7:12); i++) {
 			runModes(model, new String[] { i + "", v.name() });
 		}
+		
 	}
 
 	private static void runSpanTree() throws IOException, InterruptedException {
@@ -483,15 +484,15 @@ public final class RunTests {
 	private static void runHotel() throws IOException, InterruptedException {
 		String model = HotelT.class.getCanonicalName();
 		HotelT.Variant v;
-		v = HotelT.Variant.INTERVENES;
-		for (int i = 1; i <= (quick?6:10); i++) {
-			runModes(model, new String[] { i + "", v.name() });
-		}
 		if (!satonly) {
 			v = HotelT.Variant.NOINTERVENES;
 			for (int i = 1; i <= (quick?4:6) ; i++) {
 				runModes(model, new String[] { i + "", v.name() });
 			}
+		}
+		v = HotelT.Variant.INTERVENES;
+		for (int i = 1; i <= (quick?6:10); i++) {
+			runModes(model, new String[] { i + "", v.name() });
 		}
 	}
 

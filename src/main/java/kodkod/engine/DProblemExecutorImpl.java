@@ -153,7 +153,7 @@ public class DProblemExecutorImpl<S extends AbstractSolver<PardinusBounds, Exten
 			}
 		} catch (InterruptedException | IllegalThreadStateException e1) {
 			// was interrupted in the meantime
-			e1.printStackTrace();
+//			e1.printStackTrace();
 		} catch (RejectedExecutionException e) {
 			// was shutdown in the meantime
 			e.printStackTrace();

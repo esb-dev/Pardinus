@@ -199,7 +199,7 @@ public final class RunIterateCModel {
 			}
 			long t2 = System.currentTimeMillis();
 
-			for (; i<10000 && solutions.hasNextC(); i++) {
+			for (; i<1 && solutions.hasNextC(); i++) {
 				solution = solutions.nextC();
 			}
 			long t22 = System.currentTimeMillis();

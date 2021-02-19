@@ -275,7 +275,7 @@ public class ElectrodSolver implements UnboundedSolver<ExtendedOptions>,
 			
 			try {
 				BufferedReader output = new BufferedReader(new InputStreamReader(
-						p.getInputStream()));
+						p.getErrorStream()));
 
 				String oline = "";
 				while ((oline = output.readLine()) != null)

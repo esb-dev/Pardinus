@@ -563,7 +563,8 @@ public class PardinusBounds extends Bounds {
 	public Formula resolve(Reporter reporter) {
 		List<Formula> xtra = new ArrayList<Formula>();
 		
-		Set<Relation> rs = new HashSet<Relation>(relations_symb);
+		// needed to preserve the order of creation, otherwise non-deterministic results
+		List<Relation> rs = new ArrayList<Relation>(relations_symb);
 		for (Relation r : rs)
 			xtra.addAll(symbolic.resolve(r,reporter));
 		Formula res = NaryFormula.and(xtra);
@@ -654,9 +655,11 @@ public class PardinusBounds extends Bounds {
 	public synchronized PardinusBounds clone() {
 		try {
 				
+		    Map<Relation,TupleSet> xx = super.lowerBounds();
+		    Map<Relation,TupleSet> yy = super.upperBounds();
 			return new PardinusBounds(universe().factory(),
-					new LinkedHashMap<Relation, TupleSet>(super.lowerBounds()),
-					new LinkedHashMap<Relation, TupleSet>(super.upperBounds()),
+					new LinkedHashMap<Relation, TupleSet>(xx),
+					new LinkedHashMap<Relation, TupleSet>(yy),
 					new LinkedHashMap<Relation, TupleSet>(targets),
 					new LinkedHashMap<Relation, Integer>(weights),
 					new LinkedHashMap<Relation, Expression>(lowers_symb),
