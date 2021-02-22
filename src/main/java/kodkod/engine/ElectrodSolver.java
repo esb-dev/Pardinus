@@ -253,23 +253,7 @@ public class ElectrodSolver implements UnboundedSolver<ExtendedOptions>,
 			Runtime.getRuntime().addShutdownHook(new Thread() {
 				@Override
 				public void run() {
-					if (!System.getProperty("os.name").toLowerCase(Locale.US).startsWith("windows"))
-						try {
-							if (p.isAlive()) {
-								Field f = p.getClass().getDeclaredField("pid");
-								f.setAccessible(true);
-	//							p.destroy();
-	//							System.out.println(f.get(p));
-	//							new ProcessBuilder("kill",f.get(p).toString()).start();
-								Process x = Runtime.getRuntime().exec("kill " + f.get(p));
-							}
-						} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | IOException
-								 e) {
-							// TODO Auto-generated catch block
-							 e.printStackTrace();
-						}
-					else
-						p.destroy();
+					p.destroy();
 				}
 			});
 			
