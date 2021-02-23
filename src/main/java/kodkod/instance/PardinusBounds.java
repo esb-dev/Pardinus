@@ -196,10 +196,14 @@ public class PardinusBounds extends Bounds {
 		// in this automatic splitting they are irrelevant any way, since static are resolved first
 		List<Relation> problematic = new LinkedList<Relation>();
 		Set<Relation> rs = b.relations_symb; 
-		for (Relation r : rs)
-			for (Relation d : b.symbolic.deps.get(r))
-				if (d.isVariable())
-					problematic.add(r);
+		for (Relation r : rs) {
+		    if (r.isVariable())
+		        problematic.add(r);
+		    else 
+    			for (Relation d : b.symbolic.deps.get(r))
+    				if (d.isVariable())
+    					problematic.add(r);
+		}
 		
 		rs.removeAll(problematic);
 		
