@@ -50,7 +50,7 @@ public final class BinaryTempFormula extends Formula {
      */
     BinaryTempFormula(Formula left, TemporalOperator op, Formula right) {
         if (!op.binary()) {
-            throw new IllegalArgumentException("Not a unary operator: " + op);
+            throw new IllegalArgumentException("Not a binary operator: " + op);
         }
         if (op == null || left == null || right == null) {
             throw new NullPointerException("null arg");
