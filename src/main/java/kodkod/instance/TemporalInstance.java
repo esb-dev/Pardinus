@@ -46,8 +46,8 @@ import kodkod.util.ints.IndexedEntry;
 
 /**
  * Represents a temporal instance of a temporal relational problem containing
- * {@link kodkod.ast.VarRelation variable relations} in the
- * {@link kodkod.instance.TemporalBounds temporal bounds}.
+ * {@link kodkod.ast.Relation@VarRelation variable relations} in the
+ * {@link kodkod.instance.PardinusBounds temporal bounds}.
  * 
  * As of Pardinus 1.2, a looping state is always assumed to exist (i.e., they
  * always represent an infinite path).
@@ -170,7 +170,7 @@ public class TemporalInstance extends Instance {
 	 * 
 	 * @assumes some instance.loop
 	 * @param instance the expanded static solution to the problem
-	 * @param tmptrans temporal translation information, including original variable
+	 * @param extbounds temporal translation information, including original variable
 	 *                 relations
 	 * @throws IllegalArgumentException no instance.loop
 	 */
